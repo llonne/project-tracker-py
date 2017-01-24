@@ -28,27 +28,66 @@ def get_student_by_github(github):
         WHERE github = :github
         """
     db_cursor = db.session.execute(QUERY, {'github': github})
+    #print db_cursor
     row = db_cursor.fetchone()
+    #print row
     print "Student: %s %s\nGithub account: %s" % (row[0], row[1], row[2])
 
 
 def make_new_student(first_name, last_name, github):
     """Add a new student and print confirmation.
 
-    Given a first name, last name, and GitHub account, add student to the
-    database and print a confirmation message.
+    Given a first name, last name, and GitHub account, add student to
+    the database and print a confirmation message.
     """
-    pass
+
+    QUERY = """
+            INSERT INTO students
+              VALUES (:first_name, :last_name, :github)
+            """
+
+    db.session.execute(QUERY, {'first_name': first_name,
+                               'last_name': last_name,
+                               'github': github})
+
+    db.session.commit()
+
+    print "Successfully added student: %s %s" % (first_name,
+                                                 last_name)
 
 
 def get_project_by_title(title):
     """Given a project title, print information about the project."""
-    pass
+
+    QUERY = """
+        SELECT title, description
+        FROM projects
+        WHERE title = :title
+        """
+    db_cursor = db.session.execute(QUERY, {'title': title})
+    #print db_cursor
+    row = db_cursor.fetchone()
+    #print row
+    print "Title: %s \nDescription: %s" % (row[0], row[1])
 
 
-def get_grade_by_github_title(github, title):
+def get_grade_by_github_title(github, ptitle):
     """Print grade student received for a project."""
-    pass
+
+    QUERY = """
+        SELECT grade, project_title
+        FROM grades
+        WHERE student_github = :student_g and
+        project_title = :title
+        """
+    db_cursor = db.session.execute(QUERY, {'student_g': github,
+                                            'title' : ptitle
+                                            })
+
+    #print db_cursor
+    row = db_cursor.fetchone()
+    #print row
+    print "Grade: %s \nDescription: %s" % (row[0], row[1])
 
 
 def assign_grade(github, title, grade):
